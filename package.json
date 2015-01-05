@@ -1,0 +1,10 @@
+{
+  "name": "TestCateringManagerAutomation",
+  "version": "0.0.0",
+  "description": "TestCateringManagerAutomation",
+  "main": "server.js",
+  "author": {
+    "name": "mlevan",
+    "email": ""
+  }
+}
