@@ -1,7 +1,8 @@
 ﻿describe('Test Catering Manager Connection', function () {
     it('Verify that the Catering Manager page connects', function () {
-        browser.get("http://username:password@cateringmanagerqa.chipotle.esc/Order/CreateOrder");
-
+        setInterval(function() {}, 5000);
+        browser.get("http://mlevan:August10th@cateringmanagerqa.chipotle.esc/Order/CreateOrder");
+        setInterval(function() {}, 5000);
         browser.getTitle(function(title){
             assert(title === 'Create Order - Chipotle Catering');
         })

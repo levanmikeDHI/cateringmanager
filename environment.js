@@ -19,6 +19,10 @@ module.exports = {
 
     // A base URL for your application under test.
     baseUrl:
-      ('http://cateringmanagerqa.chipotle.esc')
+      ('http://www.google.com'),
+
+    // Setting to help with 'Timed out waiting for Protractor to sync with page' error
+    allScriptsTimeout:
+        10000
 
 };
