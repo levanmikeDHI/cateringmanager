@@ -11,7 +11,7 @@ var orderDetailsPageObjects = {
 // Start our test
 describe('Create New Order with BBTB from Catering Manager', function() {
     it('Create a 20 BBTB order', function() {
-        browser.get("http://user:pass@cateringmanagerqa.chipotle.esc");
+        browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         // Click 'Create New Order' link
         topNavigationPageObjects.createNewOrderLink.click();
         //Enter in Date and Time of Catering order
