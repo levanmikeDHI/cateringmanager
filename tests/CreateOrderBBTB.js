@@ -12,7 +12,8 @@ var restaurantSearchPageObjects = {
 var orderDetailsPageObjects = {
     pickupDateTxt : element(by.id("txtPickUpDate")),
     pickupDateNextMonthIcon : element(by.css("span.ui-icon.ui-icon-circle-triangle-e")),
-    pickupTimeTxt : element(by.id("txtPickUpTime"))
+    pickupTimeTxt : element(by.id("txtPickUpTime")),
+    restaurantNameTxt : element(by.id("lblStoreName"))
 };
 
 var customerDataPageObjects = {
@@ -33,11 +34,16 @@ describe('Create New Order with BBTB from Catering Manager', function() {
         topNavigationPageObjects.createNewOrderLink.click();
         // Change default store #9999 to #74
         restaurantSearchPageObjects.changeRestaurantButton.click();
+        restaurantSearchPageObjects.restaurantNumberTxt.sendKeys("74");
+        restaurantSearchPageObjects.changeRestaurantSearchButton.click();
+        expect(restaurantSearchPageObjects.restaurantStoreNameButton.getText()).toBe('88TH & WADSWORTH');
+        restaurantSearchPageObjects.restaurantStoreNameButton.click();
+        expect(orderDetailsPageObjects.restaurantNameTxt.getText()).toBe('88th & Wadsworth');
 
         // Get today's date so we can make an order for the next day
         var tomorrowsDate = (new Date());
         tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
-
+        // Format the string we are going to pass in
         var day = tomorrowsDate.getDate();
         var month = tomorrowsDate.getMonth() + 1;
         var year = tomorrowsDate.getFullYear();
@@ -47,22 +53,8 @@ describe('Create New Order with BBTB from Catering Manager', function() {
         //Enter in Date and Time of Catering order
         browser.driver.executeScript("arguments[0].setAttribute('value', arguments[1])",
             orderDetailsPageObjects.pickupDateTxt.getWebElement(), tomorrowsDateStr);
-
         browser.driver.executeScript("arguments[0].setAttribute('value', arguments[1])",
             orderDetailsPageObjects.pickupTimeTxt.getWebElement(), "11:15am");
-
-
-        // Enter in Date and Time of Catering order
-        // Get today's date so we can make an order for the next day
-        //var tomorrowsDate = new Date();
-        //tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
-        // Open Date calendar and pick tomorrow's date
-        //orderDetailsPageObjects.pickupDateTxt.click();
-        //var calendarPopup = element(by.id('ui-datepicker-div'));
-        //expect(calendarPopup.getText()).toEqual('7');
-        //browser.findElement(by.linkText(tomorrowsDate.getDate().toString())).click();
-        //orderDetailsPageObjects.pickupTimeTxt.sendKeys("11:15am");
-
 
         // Enter Customer Contact Information
         customerDataPageObjects.ccFirstName.sendKeys("Test");
