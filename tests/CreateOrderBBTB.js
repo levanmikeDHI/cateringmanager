@@ -1,6 +1,6 @@
-var topNavigationPageObjects = {
-    createNewOrderLink : element(by.id("lnkCreateOrder"))
-};
+var topNavigationPageObj = require('./topNavigationPageObjects.js');
+
+var topNavigationPage = new topNavigationPageObj();
 
 var restaurantSearchPageObjects = {
     changeRestaurantButton : element(by.id("storeChange")),
@@ -41,7 +41,7 @@ describe('Create New Order with BBTB from Catering Manager', function() {
     it('Create a 20 BBTB order', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         // Click 'Create New Order' link
-        topNavigationPageObjects.createNewOrderLink.click();
+        topNavigationPage.createNewOrder();
         // Change default store #9999 to #74
         restaurantSearchPageObjects.changeRestaurantButton.click();
         restaurantSearchPageObjects.restaurantNumberTxt.sendKeys("74");
