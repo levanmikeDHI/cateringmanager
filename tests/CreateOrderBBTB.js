@@ -10,9 +10,8 @@ var restaurantSearchPageObjects = {
 };
 
 var orderDetailsPageObjects = {
-    pickupDateTxt : element(by.id("txtPickUpDate")),
-    pickupDateNextMonthIcon : element(by.css("span.ui-icon.ui-icon-circle-triangle-e")),
-    pickupTimeTxt : element(by.id("txtPickUpTime")),
+    pickupDateTxt : element(by.model('order.PickupDate')),
+    pickupTimeTxt : element(by.model("order.PickupTime")),
     restaurantNameTxt : element(by.id("lblStoreName"))
 };
 
@@ -24,6 +23,17 @@ var customerDataPageObjects = {
     ccExtension : element(by.id("txtBcExtension")),
     ccEmail : element(by.id("txtBcEmail")),
     ccEvent : element(by.id("txtBcEventType"))
+};
+
+var bbtbPageObjects = {
+    bbtbButton : element(by.css('[ng-click="addOrderItem(selectedRestaurant.Categories[0].MenuItems[0])"]')),
+    bbtbQtyTxt : element(by.name("OrderItemQty")),
+    bbtbAssortmentButton : element(by.css('[ng-click="getAssortment(orderItem,orderItemForm.OrderItemQty.$viewValue); orderItem.assorted = !orderItem.assorted;"]')),
+    bbtbAssortmentTotal : element(by.name("txtBbtbSubTotal"))
+};
+
+var orderSummaryPageObjects = {
+    submitOrderButton : element(by.className("lblCreateOrder"))
 };
 
 // Start our test
@@ -43,18 +53,14 @@ describe('Create New Order with BBTB from Catering Manager', function() {
         // Get today's date so we can make an order for the next day
         var tomorrowsDate = (new Date());
         tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
-        // Format the string we are going to pass in
+        // Set tomorrow's day that we are going to pass in
         var day = tomorrowsDate.getDate();
-        var month = tomorrowsDate.getMonth() + 1;
-        var year = tomorrowsDate.getFullYear();
 
-        var tomorrowsDateStr = month + "/" + day + "/" + year;
-
-        //Enter in Date and Time of Catering order
-        browser.driver.executeScript("arguments[0].setAttribute('value', arguments[1])",
-            orderDetailsPageObjects.pickupDateTxt.getWebElement(), tomorrowsDateStr);
-        browser.driver.executeScript("arguments[0].setAttribute('value', arguments[1])",
-            orderDetailsPageObjects.pickupTimeTxt.getWebElement(), "11:15am");
+        // Enter in Date of Catering order
+        orderDetailsPageObjects.pickupDateTxt.sendKeys('');
+        browser.driver.findElement(by.linkText(day.toString())).click();
+        // Enter in Time of Catering order
+        orderDetailsPageObjects.pickupTimeTxt.sendKeys('11:15am');
 
         // Enter Customer Contact Information
         customerDataPageObjects.ccFirstName.sendKeys("Test");
@@ -65,5 +71,28 @@ describe('Create New Order with BBTB from Catering Manager', function() {
         customerDataPageObjects.ccEmail.sendKeys("chipotleautomation@gmail.com");
         customerDataPageObjects.ccEvent.sendKeys("My Automation Test");
 
+        // Click BBTB button
+        bbtbPageObjects.bbtbButton.click();
+        expect(bbtbPageObjects.bbtbQtyTxt.getText()).toBe('');
+
+        // Enter in Qty of 20
+        bbtbPageObjects.bbtbQtyTxt.sendKeys("20");
+
+        // Click Assortment button
+        bbtbPageObjects.bbtbAssortmentButton.click();
+
+        // Verify that the Total = 20
+        browser.waitForAngular().then(function() {
+            expect(bbtbPageObjects.bbtbAssortmentTotal.getAttribute('value')).toBe('20');
+        });
+
+        // Click Submit Order
+        orderSummaryPageObjects.submitOrderButton.click();
+
+        // Check for successful order
+        browser.getTitle(function(title){
+            browser.waitForAngular();
+            assert(title === 'Order Manager - Chipotle Catering');
+        })
     });
 });
