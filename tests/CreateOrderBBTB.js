@@ -89,9 +89,21 @@ describe('Create New Order with BBTB from Catering Manager', function() {
         // Click Submit Order
         orderSummaryPageObjects.submitOrderButton.click();
 
-        // Check for successful order
+        // Wait for Order Manager page to return
+        browser.waitForAngular().then(function() {
+            // Check for successful order
+            browser.driver.wait(function() {
+                return browser.driver.getCurrentUrl().then(function(url) {
+                    return /number/.test(url);
+                })
+            });
+        });
+
+        // Validate that the notification order number matches what we see in the URL
         browser.getTitle(function(title){
             browser.waitForAngular();
+            var orderNumber = element(by.model("order.Number"));
+            expect(browser.getCurrentUrl()).toContain("number=" + orderNumber);
             assert(title === 'Order Manager - Chipotle Catering');
         })
     });
