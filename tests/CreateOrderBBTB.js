@@ -1,19 +1,12 @@
+// Including js code of the Page Objects we will need for this Spec
 var topNavigationPageObj = require('./topNavigationPageObjects.js');
+var restaurantSearchPageObj = require('./restaurantSearchPageObjects.js');
+var orderDetailsPageObj = require('./orderDetailsPageObjects.js');
 
+// Declaring those Page Objects so we can use them later
 var topNavigationPage = new topNavigationPageObj();
-
-var restaurantSearchPageObjects = {
-    changeRestaurantButton : element(by.id("storeChange")),
-    restaurantNumberTxt : element(by.id("txtIdSearch")),
-    changeRestaurantSearchButton : element(by.id("idSearch")),
-    restaurantStoreNameButton : element(by.id("storeName"))
-};
-
-var orderDetailsPageObjects = {
-    pickupDateTxt : element(by.model('order.PickupDate')),
-    pickupTimeTxt : element(by.model("order.PickupTime")),
-    restaurantNameTxt : element(by.id("lblStoreName"))
-};
+var restaurantSearchPage = new restaurantSearchPageObj();
+var orderDetailsPage = new orderDetailsPageObj();
 
 var customerDataPageObjects = {
     ccFirstName : element(by.id("txtBcFirstName")),
@@ -36,19 +29,24 @@ var orderSummaryPageObjects = {
     submitOrderButton : element(by.className("lblCreateOrder"))
 };
 
+var orderManagerPageObjects = {
+    searchByOrderIdTxt : element(by.model("searchParameters.orderNumber")),
+    searchGridTable : element(by.repeater('row in renderedRows'))
+};
+
 // Start our test
 describe('Create New Order with BBTB from Catering Manager', function() {
     it('Create a 20 BBTB order', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         // Click 'Create New Order' link
-        topNavigationPage.createNewOrder();
+        topNavigationPage.clickCreateNewOrder();
         // Change default store #9999 to #74
-        restaurantSearchPageObjects.changeRestaurantButton.click();
-        restaurantSearchPageObjects.restaurantNumberTxt.sendKeys("74");
-        restaurantSearchPageObjects.changeRestaurantSearchButton.click();
-        expect(restaurantSearchPageObjects.restaurantStoreNameButton.getText()).toBe('88TH & WADSWORTH');
-        restaurantSearchPageObjects.restaurantStoreNameButton.click();
-        expect(orderDetailsPageObjects.restaurantNameTxt.getText()).toBe('88th & Wadsworth');
+        restaurantSearchPage.clickChangeRestaurantButton();
+        restaurantSearchPage.typeRestaurantNumberText("74");
+        restaurantSearchPage.clickChangeRestaurantSearchButton();
+        expect(restaurantSearchPage.getRestaurantStoreNameText()).toBe('88TH & WADSWORTH');
+        restaurantSearchPage.clickRestaurantStoreNameText();
+        expect(orderDetailsPage.restaurantNameText.getText()).toBe('88th & Wadsworth');
 
         // Get today's date so we can make an order for the next day
         var tomorrowsDate = (new Date());
@@ -57,10 +55,10 @@ describe('Create New Order with BBTB from Catering Manager', function() {
         var day = tomorrowsDate.getDate();
 
         // Enter in Date of Catering order
-        orderDetailsPageObjects.pickupDateTxt.sendKeys('');
+        orderDetailsPage.typePickupDateText('');
         browser.driver.findElement(by.linkText(day.toString())).click();
         // Enter in Time of Catering order
-        orderDetailsPageObjects.pickupTimeTxt.sendKeys('11:15am');
+        orderDetailsPage.typePickupTimeText('11:15am');
 
         // Enter Customer Contact Information
         customerDataPageObjects.ccFirstName.sendKeys("Test");
@@ -90,21 +88,27 @@ describe('Create New Order with BBTB from Catering Manager', function() {
         orderSummaryPageObjects.submitOrderButton.click();
 
         // Wait for Order Manager page to return
-        browser.waitForAngular().then(function() {
-            // Check for successful order
-            browser.driver.wait(function() {
-                return browser.driver.getCurrentUrl().then(function(url) {
-                    return /number/.test(url);
-                })
-            });
+        browser.driver.wait(function() {
+            return browser.driver.getCurrentUrl().then(function(url) {
+                return /number/.test(url);
+            })
         });
 
-        // Validate that the notification order number matches what we see in the URL
-        browser.getTitle(function(title){
-            browser.waitForAngular();
-            var orderNumber = element(by.model("order.Number"));
-            expect(browser.getCurrentUrl()).toContain("number=" + orderNumber);
-            assert(title === 'Order Manager - Chipotle Catering');
-        })
+        // Wait for Notification Notice to go away
+        browser.getCurrentUrl().then(function(url) {
+            expect(url).toContain("OrderManager?message=saved&number");
+            // Now that we know the page is loaded let's get the Order Number from the URL, putting a 15 seconds wait on this because initial load up takes some time
+            var orderNumber = url;
+            orderNumber = orderNumber.toString().replace("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc/Order/OrderManager?message=saved&number=", "");
+
+            orderManagerPageObjects.searchByOrderIdTxt.sendKeys(orderNumber);
+            //orderManagerPageObjects.searchByOrderIdTxt.actions().sendKeys(protractor.)
+        }, 15000);
+
+        browser.waitForAngular();
+
+        // Click on our search result
+        element(by.repeater('row.in.renderedRows').row(0)).element(by.className('ngCell.col1.colt1')).click();
+        browser.waitForAngular();
     });
 });
