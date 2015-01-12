@@ -31,8 +31,9 @@ exports.config = {
         includeStackTrace: true
         // Function called to print jasmine results
         //print: function() {}
-    }
+    },
 
-    // Setting the angular root element so Protractor waits for Angular to load
-    //rootElement: 'cm.app'
+    // Setting to help with 'Timed out waiting for Protractor to sync with page' error
+    allScriptsTimeout:
+        15000
 };
