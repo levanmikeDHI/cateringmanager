@@ -6,7 +6,7 @@ var TopNavigationPage = function (){
 
 
 TopNavigationPage.prototype = Object.create({}, {
-    createNewOrder: { value: function () { return this.createNewOrderLink.click(); }}
+    clickCreateNewOrder : { value: function () { return this.createNewOrderLink.click(); }}
 });
 
 module.exports = TopNavigationPage;
