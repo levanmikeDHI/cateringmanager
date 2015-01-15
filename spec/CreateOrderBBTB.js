@@ -22,7 +22,7 @@ var orderSummaryPage = new orderSummaryPageObj();
 var orderManagerPage = new orderManagerPageObj();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Start our test
+// Start our test of creating a new order
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 describe('Create New Order with BBTB from Catering Manager', function() {
     it('Create a 20 BBTB order', function() {
@@ -125,11 +125,20 @@ describe('Create New Order with BBTB from Catering Manager', function() {
             getOrderNumber = getOrderNumber.toString().replace("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc/Order/OrderManager?message=saved&number=", "");
             // Store our order number in our helper.js file
             helper.setOrderNumber(getOrderNumber);
-            // Enter our newly created order number in the Search By ID text
-            orderManagerPage.typeSearchByOrderIdText(helper.getOrderNumber());
-            browser.driver.actions().sendKeys(protractor.Key.TAB).perform();
         }, 15000);
+    });
+});
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Start our test of viewing our newly created order
+///////////////////////////////////////////////////////////////////////////////////////////////////
+describe('View newly created order with BBTB from Catering Manager', function() {
+    it('View our 20 BBTB order', function() {
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Enter our newly created order number in the Search By ID text
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        orderManagerPage.typeSearchByOrderIdText(helper.getOrderNumber());
+        browser.driver.actions().sendKeys(protractor.Key.TAB).perform();
         ///////////////////////////////////////////////////////////////////////////////////////////
         // Click the first and only row in the grid table that has our newly created order
         ///////////////////////////////////////////////////////////////////////////////////////////
