@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$/spec/CreateOrderBBTB.js" libraries="{Node.js Globals}" />
+    <file url="file://$PROJECT_DIR$/src/conf.js" libraries="{Node.js Globals}" />
     <file url="PROJECT" libraries="{Node.js v0.10.35 Core Modules, angular-protractor-DefinitelyTyped, angular-scenario-DefinitelyTyped, angularjs-DefinitelyTyped, jasmine-DefinitelyTyped, selenium-webdriver-DefinitelyTyped}" />
   </component>
 </project>
