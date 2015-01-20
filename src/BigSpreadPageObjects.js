@@ -9,6 +9,12 @@ var BigSpreadPage = function (){
 
 BigSpreadPage.prototype = Object.create({}, {
     clickBigSpreadButton : { value: function () { return this.bigSpreadButton.click(); }},
+    typeBigSpreadQtyText : { value: function(keys) {
+        element.all(by.repeater('orderItem in order.OrderItems')).last().then(function(row) {
+            var lastQtyElement = row.element(by.name("OrderItemQty"));
+            lastQtyElement.sendKeys(keys);
+        })
+    }},
     selectBigSpreadOptionFirst : { value: function(option) {
         element.all(by.repeater('orderItem in order.OrderItems')).last().then(function(row) {
             var lastOptionFirst = row.element(by.model('orderItem.OrderSubItems[0].SubMenuItemId'));
