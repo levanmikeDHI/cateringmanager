@@ -11,7 +11,7 @@ exports.config = {
 
     // Which tests should we run?
     suites: {
-        connection : '../spec/CreateOrder2MeatAndBigChips.js'
+        connection : '../spec/CreateOrderBBTBVeggieAndBiggerChips.js'
     },
 
     // Setting our window size to max before the test starts
