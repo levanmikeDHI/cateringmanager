@@ -10,6 +10,8 @@ var RestaurantSearchPage = function (){
     this.restaurantStoreAddressText = element(by.id("lblAddress"));
     this.restaurantStoreCityStateZipText = element(by.id("lblStoreInfo"));
     this.restaurantStoreCrossStreetsText = element(by.id("haveCrossStreet"));
+    this.restaurantZipCodeText = element(by.id("txtZipSearch"));
+    this.restaurantPaginationText = element(by.id('divZipPaging'));
 };
 
 
@@ -23,7 +25,9 @@ RestaurantSearchPage.prototype = Object.create({}, {
     getRestaurantStoreNameText : { value: function () { return this.restaurantStoreNameText.getText(); }},
     getRestaurantStoreAddressText : { value: function () { return this.restaurantStoreAddressText.getText(); }},
     getRestaurantStoreCityStateZipText : { value: function () { return this.restaurantStoreCityStateZipText.getText(); }},
-    getRestaurantStoreCrossStreetsText : { value: function () { return this.restaurantStoreCrossStreetsText.getText(); }}
+    getRestaurantStoreCrossStreetsText : { value: function () { return this.restaurantStoreCrossStreetsText.getText(); }},
+    typeRestaurantZipCodeText : { value: function (keys) { return this.restaurantZipCodeText.sendKeys(keys); }},
+    getRestaurantPaginationText : { value: function () { return this.restaurantPaginationText.getText(); }}
 });
 
 module.exports = RestaurantSearchPage;
