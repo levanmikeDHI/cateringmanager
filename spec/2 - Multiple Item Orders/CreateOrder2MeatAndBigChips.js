@@ -1,15 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Including js code of the Page Objects we will need for this Spec
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-var helper = require('../src/Helper.js');
-var topNavigationPageObj = require('../src/topNavigationPageObjects.js');
-var restaurantSearchPageObj = require('../src/restaurantSearchPageObjects.js');
-var orderDetailsPageObj = require('../src/orderDetailsPageObjects.js');
-var customerDataPageObj = require('../src/CustomerDataPageObjects.js');
-var bbtbPageObj = require('../src/BbtbPageObjects.js');
-var bigSpreadPageObj = require('../src/BigSpreadPageObjects.js');
-var orderSummaryPageObj = require('../src/OrderSummaryPageObjects.js');
-var orderManagerPageObj = require('../src/OrderManagerPageObjects.js');
+var helper = require('../../src/Helper.js');
+var topNavigationPageObj = require('../../src/TopNavigationPageObjects.js');
+var restaurantSearchPageObj = require('../../src/RestaurantSearchPageObjects.js');
+var orderDetailsPageObj = require('../../src/OrderDetailsPageObjects.js');
+var customerDataPageObj = require('../../src/CustomerDataPageObjects.js');
+var twoMeatPageObj = require('../../src/TwoMeatPageObjects.js');
+var chipsPageObj = require('../../src/ChipsPageObjects.js');
+var orderSummaryPageObj = require('../../src/OrderSummaryPageObjects.js');
+var orderManagerPageObj = require('../../src/OrderManagerPageObjects.js');
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Declaring those Page Objects so we can use them later
@@ -18,23 +18,23 @@ var topNavigationPage = new topNavigationPageObj();
 var restaurantSearchPage = new restaurantSearchPageObj();
 var orderDetailsPage = new orderDetailsPageObj();
 var customerDataPage = new customerDataPageObj();
-var bbtbPage = new bbtbPageObj();
-var bigSpreadPage = new bigSpreadPageObj();
+var twoMeatPage = new twoMeatPageObj();
+var chipsPage = new chipsPageObj();
 var orderSummaryPage = new orderSummaryPageObj();
 var orderManagerPage = new orderManagerPageObj();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Start our test of creating a new order
+// Create New Order with 2 Meat and Big Chips from Catering Manager
+// Create a 20 2 Meat Spread with Chicken and Carnitas and 3 Big Chips order.  This test will
+// created the order, go to View/Edit Order page, and verify that the store info, customer contact
+// info, items we ordered, and the order summary info comes back to us correctly.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-describe('Create New Order with BBTB and Big Spread from Catering Manager', function() {
-    it('Create a 20 BBTB and 25 Big Spread with Chicken, Steak, and Fajita Veggies order', function() {
+describe('Create New Order with 2 Meat and Big Chips from Catering Manager', function() {
+    it('2 Meat Spread with Chicken and Carnitas and Big Chips', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click 'Create New Order' link
-        ///////////////////////////////////////////////////////////////////////////////////////////
         topNavigationPage.clickCreateNewOrder();
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Select store #74
+        // Select store #74 because this is our automation testing store
         ///////////////////////////////////////////////////////////////////////////////////////////
         restaurantSearchPage.clickChangeRestaurantButton();
         restaurantSearchPage.typeRestaurantNumberText("74");
@@ -44,22 +44,19 @@ describe('Create New Order with BBTB and Big Spread from Catering Manager', func
         expect(orderDetailsPage.restaurantNameText.getText()).toBe('88th & Wadsworth');
 
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Get today's date so we can make an order for the next day
+        // Find out what tomorrow's date is and store off the numerical day to use later
         ///////////////////////////////////////////////////////////////////////////////////////////
         var tomorrowsDate = (new Date());
         tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Format the string we are going to pass in
-        ///////////////////////////////////////////////////////////////////////////////////////////
         var day = tomorrowsDate.getDate();
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Format and store date in our Helper.js to be used later
+        // Format the date and store date in our Helper.js to be used later
         ///////////////////////////////////////////////////////////////////////////////////////////
         var tomorrowsDateStr = (('0' + (tomorrowsDate.getMonth()+1)).slice(-2) + '/' + ('0' + tomorrowsDate.getDate()).slice(-2) + '/' + tomorrowsDate.getFullYear());
         helper.setOrderDate(tomorrowsDateStr.toString());
 
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Enter in Date of Catering order
+        // Click the calendar control and select tomorrow's day
         ///////////////////////////////////////////////////////////////////////////////////////////
         orderDetailsPage.typePickupDateText('');
         browser.driver.findElement(by.linkText(day.toString())).click();
@@ -69,9 +66,6 @@ describe('Create New Order with BBTB and Big Spread from Catering Manager', func
         helper.setOrderTime('11:15 AM');
         orderDetailsPage.typePickupTimeText(helper.getOrderTime());
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Enter Customer Contact Information
-        ///////////////////////////////////////////////////////////////////////////////////////////
         customerDataPage.typeCcFirstNameText("Test");
         customerDataPage.typeCcLastNameText("Automation");
         customerDataPage.typeCcCompanyText("Chipotle");
@@ -80,70 +74,26 @@ describe('Create New Order with BBTB and Big Spread from Catering Manager', func
         customerDataPage.typeCcEmailText("chipotleautomation@gmail.com");
         customerDataPage.typeCcEventText("My Automation Test");
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click BBTB button
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bbtbPage.clickBbtbButton();
-        expect(bbtbPage.getBbtbQtyText()).toBe('');
+        twoMeatPage.clickTwoMeatSpreadButton();
+        twoMeatPage.typeTwoMeatSpreadQtyText('20');
+        twoMeatPage.selectTwoMeatSpreadOptionFirst('Chicken');
+        twoMeatPage.selectTwoMeatSpreadOptionSecond('Carnitas');
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Enter in Qty of 20 for BBTB
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bbtbPage.typeBbtbQtyText("20");
+        chipsPage.clickChipsBigButton();
+        chipsPage.typeChipsBigQtyText('3');
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click Assortment button
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bbtbPage.clickBbtbAssortmentButton();
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Verify that the Total = 20
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        browser.waitForAngular().then(function() {
-            expect(bbtbPage.getBbtbAssortmentTotalText()).toBe('20');
-        });
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click Big Spread button
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bigSpreadPage.clickBigSpreadButton();
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Enter in Qty of 25 for Big Spread
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bigSpreadPage.typeBigSpreadQtyText("25");
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Select 'Chicken' as our First Spread Option
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bigSpreadPage.selectBigSpreadOptionFirst('Chicken');
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Select 'Steak' as our Second Spread Option
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bigSpreadPage.selectBigSpreadOptionSecond('Steak');
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Select 'Fajita Veggies' as our Third Spread Option
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        bigSpreadPage.selectBigSpreadOptionThird('Fajita Veggies');
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click Submit Order
-        ///////////////////////////////////////////////////////////////////////////////////////////
         orderSummaryPage.clickSubmitOrderButton();
-
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Wait for Order Manager page to return
+        // AngularJS wait for Order Manager page to return so we can interact with the page some more
         ///////////////////////////////////////////////////////////////////////////////////////////
         browser.driver.wait(function() {
             return browser.driver.getCurrentUrl().then(function(url) {
                 return /number/.test(url);
             })
         });
-
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Wait for Notification Notice to go away
+        // Wait for Notification Notice to go away because we can't interact with the page until
+        // this is gone
         ///////////////////////////////////////////////////////////////////////////////////////////
         browser.getCurrentUrl().then(function(url) {
             expect(url).toContain("OrderManager?message=saved&number");
@@ -154,22 +104,14 @@ describe('Create New Order with BBTB and Big Spread from Catering Manager', func
             helper.setOrderNumber(getOrderNumber);
         }, 15000);
     });
-});
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Start our test of viewing our newly created order
-///////////////////////////////////////////////////////////////////////////////////////////////////
-describe('View newly created order with BBTB from Catering Manager', function() {
-    it('View our 20 BBTB order', function() {
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Enter our newly created order number in the Search By ID text
-        ///////////////////////////////////////////////////////////////////////////////////////////
+    it('View our 2 Meat and Big Spread order', function() {
         orderManagerPage.typeSearchByOrderIdText(helper.getOrderNumber());
         browser.driver.actions().sendKeys(protractor.Key.TAB).perform();
         ///////////////////////////////////////////////////////////////////////////////////////////
         // Click the first and only row in the grid table that has our newly created order
         ///////////////////////////////////////////////////////////////////////////////////////////
-        orderManagerPage.getRowsInSearchGridTable().then(function() {
+        orderManagerPage.getRowsInSearchGridTable().then(function () {
             // Click on our search result
             orderManagerPage.clickRowInSearchGridTable();
             // Wait for the View/Edit Order page to appear
@@ -180,17 +122,13 @@ describe('View newly created order with BBTB from Catering Manager', function() 
         // Verify Pick Up Details information
         //expect(orderDetailsPage.getPickupDateText).toBe(helper.getOrderDate());
         //expect(orderDetailsPage.getPickupTimeText()).toBe(helper.getOrderTime());
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Verify Restaurant information displays correctly
-        ///////////////////////////////////////////////////////////////////////////////////////////
+
         expect(restaurantSearchPage.getRestaurantStoreIdText()).toBe('74');
         expect(restaurantSearchPage.getRestaurantStoreNameText()).toBe('88th & Wadsworth');
         expect(restaurantSearchPage.getRestaurantStoreAddressText()).toBe('8797 Wadsworth Blvd.');
         expect(restaurantSearchPage.getRestaurantStoreCityStateZipText()).toBe('Arvada CO 80003');
         expect(restaurantSearchPage.getRestaurantStoreCrossStreetsText()).toBe('at/near 88th & Wadsworth');
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Verify Customer Contact information displays correctly
-        ///////////////////////////////////////////////////////////////////////////////////////////
+
         expect(customerDataPage.getCcFirstNameText()).toBe('Test');
         expect(customerDataPage.getCcLastNameText()).toBe('Automation');
         expect(customerDataPage.getCcCompanyText()).toBe('Chipotle');
@@ -198,51 +136,38 @@ describe('View newly created order with BBTB from Catering Manager', function() 
         expect(customerDataPage.getCcExtensionText()).toBe('9999');
         expect(customerDataPage.getCcEmailText()).toBe('chipotleautomation@gmail.com');
         expect(customerDataPage.getCcEventText()).toBe('My Automation Test');
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Verify BBTB order displays correctly
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        expect(bbtbPage.getBbtbQtyTextAttribute()).toBe('20');
-        expect(bbtbPage.getBbtbAssortmentTotalText()).toBe('20');
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Verify Big Spread order displays correctly
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        element.all(by.repeater('orderItem in order.OrderItems')).get(1).then(function (row) {
-            row.element(by.model('orderItem.Quantity')).getAttribute('value').then(function (qty) {
-                expect(qty).toBe('25');
-            });
+
+        expect(twoMeatPage.getTwoMeatSpreadQtyText()).toBe('20');
+        element.all(by.repeater('orderItem in order.OrderItems')).get(0).then(function (row) {
             row.element(by.model('orderItem.OrderSubItems[0].SubMenuItemId')).$('option:checked').getText().then(function (firstSpreadOption) {
                 expect(firstSpreadOption).toBe('Chicken');
             });
             row.element(by.model('orderItem.OrderSubItems[1].SubMenuItemId')).$('option:checked').getText().then(function (secondSpreadOption) {
-                expect(secondSpreadOption).toBe('Steak');
-            });
-            row.element(by.model('orderItem.OrderSubItems[2].SubMenuItemId')).$('option:checked').getText().then(function (thirdSpreadOption) {
-                expect(thirdSpreadOption).toBe('Fajita Veggies');
+                expect(secondSpreadOption).toBe('Carnitas');
             });
         });
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Verify Order Summary displays our order correctly
-        ///////////////////////////////////////////////////////////////////////////////////////////
+        expect(chipsPage.getChipsBigQtyText()).toBe('3');
+
         element.all(by.repeater('summaryItem in order.OrderItems')).get(0).then(function (row) {
             row.element(by.className('summaryOrderName')).getText().then(function (name) {
-                expect(name).toBe('Burritos By The Box');
+                expect(name).toBe('Two Meat Spread');
             });
             row.element(by.className('summaryOrderDes')).getText().then(function (description) {
-                expect(description).toBe('Serving 20   ( Steak 4 , Chicken 9 , Carnitas 2 , Barbacoa 2 , Fajita Veggies 2 , Sofritas 1 ) ; White');
+                expect(description).toBe('Serving 20; Chicken , Carnitas');
             });
             row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
-                expect(cost).toBe('$175.00');
+                expect(cost).toBe('$240.00');
             });
         });
         element.all(by.repeater('summaryItem in order.OrderItems')).get(1).then(function (row) {
             row.element(by.className('summaryOrderName')).getText().then(function (name) {
-                expect(name).toBe('The Big Spread');
+                expect(name).toBe('Chips & Salsa Spread');
             });
             row.element(by.className('summaryOrderDes')).getText().then(function (description) {
-                expect(description).toBe('Serving 25; Chicken , Steak , Fajita Veggies');
+                expect(description).toBe('3 Big; 0 Bigger;');
             });
             row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
-                expect(cost).toBe('$337.50');
+                expect(cost).toBe('$120.00');
             });
         });
     });

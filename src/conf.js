@@ -14,7 +14,7 @@ exports.config = {
         //Run all spec files
         //connection : '../spec/*.js'
         //Run one spec file
-        connection : '../spec/CreateOrderSearchByZipCode.js'
+        connection : '../spec/1 - Single Item Orders/CreateOrderBBTB.js'
     },
 
     // Setting our window size to max before the test starts

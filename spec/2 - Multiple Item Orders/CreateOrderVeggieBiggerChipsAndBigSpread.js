@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Including js code of the Page Objects we will need for this Spec
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-var helper = require('../src/Helper.js');
-var topNavigationPageObj = require('../src/topNavigationPageObjects.js');
-var restaurantSearchPageObj = require('../src/restaurantSearchPageObjects.js');
-var orderDetailsPageObj = require('../src/orderDetailsPageObjects.js');
-var customerDataPageObj = require('../src/CustomerDataPageObjects.js');
-var twoMeatPageObj = require('../src/TwoMeatPageObjects.js');
-var bigSpreadPageObj = require('../src/BigSpreadPageObjects.js');
-var orderSummaryPageObj = require('../src/OrderSummaryPageObjects.js');
-var orderManagerPageObj = require('../src/OrderManagerPageObjects.js');
+var helper = require('../../src/Helper.js');
+var topNavigationPageObj = require('../../src/TopNavigationPageObjects.js');
+var restaurantSearchPageObj = require('../../src/RestaurantSearchPageObjects.js');
+var orderDetailsPageObj = require('../../src/OrderDetailsPageObjects.js');
+var customerDataPageObj = require('../../src/CustomerDataPageObjects.js');
+var veggiePageObj = require('../../src/VeggiePageObjects.js');
+var chipsPageObj = require('../../src/ChipsPageObjects.js');
+var bigSpreadPageObj = require('../../src/BigSpreadPageObjects.js');
+var orderSummaryPageObj = require('../../src/OrderSummaryPageObjects.js');
+var orderManagerPageObj = require('../../src/OrderManagerPageObjects.js');
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Declaring those Page Objects so we can use them later
@@ -18,20 +19,21 @@ var topNavigationPage = new topNavigationPageObj();
 var restaurantSearchPage = new restaurantSearchPageObj();
 var orderDetailsPage = new orderDetailsPageObj();
 var customerDataPage = new customerDataPageObj();
-var twoMeatPage = new twoMeatPageObj();
+var veggiePage = new veggiePageObj();
+var chipsPage = new chipsPageObj();
 var bigSpreadPage = new bigSpreadPageObj();
 var orderSummaryPage = new orderSummaryPageObj();
 var orderManagerPage = new orderManagerPageObj();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Create New Order with 2 Meat and Big Spread from Catering Manager
-// Create a 20 2 Meat Spread with Barbacoa and Carnitas and 25 Big Spread with Chicken, Steak,
-// and Fajita Veggies order.  This test will created the order, go to View/Edit Order page, and
+// Create New Order with Veggie Spread, Bigger Chips, and Big Spread from Catering Manager
+// Create a 20 Veggie Spread, 2 Bigger Chips, and 25 Big Spread with Chicken, Steak,
+// and Sofritas order.  This test will created the order, go to View/Edit Order page, and
 // verify that the store info, customer contact info, items we ordered, and the order summary info
 // comes back to us correctly.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-describe('Create New Order with 2 Meat and Big Spread from Catering Manager', function() {
-    it('2 Meat Spread with Barbacoa and Carnitas and Big Spread with Chicken, Steak, and Fajita Veggies', function() {
+describe('Create New Order with Veggie, Bigger Chips, and Big Spread from Catering Manager', function() {
+    it('Veggie Spread, Bigger Chips, and Big Spread with Chicken, Steak, and Sofritas', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         topNavigationPage.clickCreateNewOrder();
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -75,16 +77,17 @@ describe('Create New Order with 2 Meat and Big Spread from Catering Manager', fu
         customerDataPage.typeCcEmailText("chipotleautomation@gmail.com");
         customerDataPage.typeCcEventText("My Automation Test");
 
-        twoMeatPage.clickTwoMeatSpreadButton();
-        twoMeatPage.typeTwoMeatSpreadQtyText('20');
-        twoMeatPage.selectTwoMeatSpreadOptionFirst('Barbacoa');
-        twoMeatPage.selectTwoMeatSpreadOptionSecond('Carnitas');
+        veggiePage.clickVeggieButton();
+        veggiePage.typeVeggieQtyText('20');
+
+        chipsPage.clickChipsBiggerButton();
+        chipsPage.typeChipsBiggerQtyText('2');
 
         bigSpreadPage.clickBigSpreadButton();
         bigSpreadPage.typeBigSpreadQtyText("25");
         bigSpreadPage.selectBigSpreadOptionFirst('Chicken');
         bigSpreadPage.selectBigSpreadOptionSecond('Steak');
-        bigSpreadPage.selectBigSpreadOptionThird('Fajita Veggies');
+        bigSpreadPage.selectBigSpreadOptionThird('Sofritas');
 
         orderSummaryPage.clickSubmitOrderButton();
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +112,7 @@ describe('Create New Order with 2 Meat and Big Spread from Catering Manager', fu
         }, 15000);
     });
 
-    it('View our 2 Meat and Big Spread order', function() {
+    it('View our Veggie, Bigger Chips, and Big Spread order', function() {
         orderManagerPage.typeSearchByOrderIdText(helper.getOrderNumber());
         browser.driver.actions().sendKeys(protractor.Key.TAB).perform();
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -141,17 +144,7 @@ describe('Create New Order with 2 Meat and Big Spread from Catering Manager', fu
         expect(customerDataPage.getCcEmailText()).toBe('chipotleautomation@gmail.com');
         expect(customerDataPage.getCcEventText()).toBe('My Automation Test');
 
-        expect(twoMeatPage.getTwoMeatSpreadQtyText()).toBe('20');
         element.all(by.repeater('orderItem in order.OrderItems')).get(0).then(function (row) {
-            row.element(by.model('orderItem.OrderSubItems[0].SubMenuItemId')).$('option:checked').getText().then(function (firstSpreadOption) {
-                expect(firstSpreadOption).toBe('Barbacoa');
-            });
-            row.element(by.model('orderItem.OrderSubItems[1].SubMenuItemId')).$('option:checked').getText().then(function (secondSpreadOption) {
-                expect(secondSpreadOption).toBe('Carnitas');
-            });
-        });
-
-        element.all(by.repeater('orderItem in order.OrderItems')).get(1).then(function (row) {
             row.element(by.model('orderItem.Quantity')).getAttribute('value').then(function (qty) {
                 expect(qty).toBe('25');
             });
@@ -162,30 +155,47 @@ describe('Create New Order with 2 Meat and Big Spread from Catering Manager', fu
                 expect(secondSpreadOption).toBe('Steak');
             });
             row.element(by.model('orderItem.OrderSubItems[2].SubMenuItemId')).$('option:checked').getText().then(function (thirdSpreadOption) {
-                expect(thirdSpreadOption).toBe('Fajita Veggies');
+                expect(thirdSpreadOption).toBe('Sofritas');
             });
         });
+        element.all(by.repeater('orderItem in order.OrderItems')).get(1).then(function (row) {
+            row.element(by.model('orderItem.Quantity')).getAttribute('value').then(function (qty) {
+                expect(qty).toBe('20');
+            });
+        });
+        expect(chipsPage.getChipsBiggerQtyText()).toBe('2');
 
         element.all(by.repeater('summaryItem in order.OrderItems')).get(0).then(function (row) {
             row.element(by.className('summaryOrderName')).getText().then(function (name) {
-                expect(name).toBe('Two Meat Spread');
+                expect(name).toBe('The Big Spread');
             });
             row.element(by.className('summaryOrderDes')).getText().then(function (description) {
-                expect(description).toBe('Serving 20; Barbacoa , Carnitas');
+                expect(description).toBe('Serving 25; Chicken , Steak , Sofritas');
+            });
+            row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
+                expect(cost).toBe('$337.50');
+            });
+        });
+        element.all(by.repeater('summaryItem in order.OrderItems')).get(1).then(function (row) {
+            row.element(by.className('summaryOrderName')).getText().then(function (name) {
+                expect(name).toBe('Veggie Spread');
+            });
+            row.element(by.className('summaryOrderDes')).getText().then(function (description) {
+                expect(description).toBe('Serving 20');
             });
             row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
                 expect(cost).toBe('$240.00');
             });
         });
-        element.all(by.repeater('summaryItem in order.OrderItems')).get(1).then(function (row) {
+        element.all(by.repeater('summaryItem in order.OrderItems')).get(2).then(function (row) {
             row.element(by.className('summaryOrderName')).getText().then(function (name) {
-                expect(name).toBe('The Big Spread');
+                expect(name).toBe('Chips & Salsa Spread');
             });
             row.element(by.className('summaryOrderDes')).getText().then(function (description) {
-                expect(description).toBe('Serving 25; Chicken , Steak , Fajita Veggies');
+                expect(description).toBe('0 Big; 2 Bigger;');
             });
             row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
-                expect(cost).toBe('$337.50');
+                expect(cost).toBe('$110.00');
             });
         });
     });

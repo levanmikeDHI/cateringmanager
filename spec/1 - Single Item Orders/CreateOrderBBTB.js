@@ -1,45 +1,31 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Including js code of the Page Objects we will need for this Spec
-///////////////////////////////////////////////////////////////////////////////////////////////////
-var helper = require('../src/Helper.js');
-var topNavigationPageObj = require('../src/topNavigationPageObjects.js');
-var restaurantSearchPageObj = require('../src/restaurantSearchPageObjects.js');
-var orderDetailsPageObj = require('../src/orderDetailsPageObjects.js');
-var customerDataPageObj = require('../src/CustomerDataPageObjects.js');
-var bbtbPageObj = require('../src/BbtbPageObjects.js');
-var veggiePageObj = require('../src/VeggiePageObjects.js');
-var chipsPageObj = require('../src/ChipsPageObjects.js');
-var bigSpreadPageObj = require('../src/BigSpreadPageObjects.js');
-var orderSummaryPageObj = require('../src/OrderSummaryPageObjects.js');
-var orderManagerPageObj = require('../src/OrderManagerPageObjects.js');
+var helper = require('../../src/Helper.js');
+var topNavigationPageObj = require('../../src/TopNavigationPageObjects.js');
+var restaurantSearchPageObj = require('../../src/RestaurantSearchPageObjects.js');
+var orderDetailsPageObj = require('../../src/OrderDetailsPageObjects.js');
+var customerDataPageObj = require('../../src/CustomerDataPageObjects.js');
+var bbtbPageObj = require('../../src/BbtbPageObjects.js');
+var orderSummaryPageObj = require('../../src/OrderSummaryPageObjects.js');
+var orderManagerPageObj = require('../../src/OrderManagerPageObjects.js');
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Declaring those Page Objects so we can use them later
-///////////////////////////////////////////////////////////////////////////////////////////////////
 var topNavigationPage = new topNavigationPageObj();
 var restaurantSearchPage = new restaurantSearchPageObj();
 var orderDetailsPage = new orderDetailsPageObj();
 var customerDataPage = new customerDataPageObj();
 var bbtbPage = new bbtbPageObj();
-var veggiePage = new veggiePageObj();
-var chipsPage = new chipsPageObj();
-var bigSpreadPage = new bigSpreadPageObj();
 var orderSummaryPage = new orderSummaryPageObj();
 var orderManagerPage = new orderManagerPageObj();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Create New Order with BBTB, Veggie Spread, and Bigger Chips from Catering Manager
-// Create a 20 BBTB (Brown Rice, 10 Chicken and 10 Steak), 25 Veggie Spread, and 1 Bigger Chips order.
-// This test will created the order, go to View/Edit Order page, and verify that the store info,
-// customer contact info, items we ordered, and the order summary info comes back to us correctly.
+// Create New Order with 20 BBTB order from Catering Manager
+// Create a 20 BBTB Assortment order.  This test will created the order,
+// go to View/Edit Order page, and verify that the store info, customer contact info, items we
+// ordered, and the order summary info comes back to us correctly.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Manager', function() {
-    it('BBTB, Veggie Spread, and Bigger Chips', function() {
+describe('Create New Order with BBTB from Catering Manager', function() {
+    it('Create a 20 BBTB order', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         topNavigationPage.clickCreateNewOrder();
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Select store #74 because this is our automation testing store
-        ///////////////////////////////////////////////////////////////////////////////////////////
+
         restaurantSearchPage.clickChangeRestaurantButton();
         restaurantSearchPage.typeRestaurantNumberText("74");
         restaurantSearchPage.clickChangeRestaurantSearchButton();
@@ -47,21 +33,15 @@ describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Man
         restaurantSearchPage.clickRestaurantSearchStoreNameText();
         expect(orderDetailsPage.restaurantNameText.getText()).toBe('88th & Wadsworth');
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Find out what tomorrow's date is and store off the numerical day to use later
-        ///////////////////////////////////////////////////////////////////////////////////////////
         var tomorrowsDate = (new Date());
         tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
         var day = tomorrowsDate.getDate();
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Format the date and store date in our Helper.js to be used later
+        // Format and store date in our Helper.js to be used later
         ///////////////////////////////////////////////////////////////////////////////////////////
         var tomorrowsDateStr = (('0' + (tomorrowsDate.getMonth()+1)).slice(-2) + '/' + ('0' + tomorrowsDate.getDate()).slice(-2) + '/' + tomorrowsDate.getFullYear());
         helper.setOrderDate(tomorrowsDateStr.toString());
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click the calendar control and select tomorrow's day
-        ///////////////////////////////////////////////////////////////////////////////////////////
         orderDetailsPage.typePickupDateText('');
         browser.driver.findElement(by.linkText(day.toString())).click();
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -80,39 +60,25 @@ describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Man
 
         bbtbPage.clickBbtbButton();
         expect(bbtbPage.getBbtbQtyText()).toBe('');
-        bbtbPage.typeBbtbQtyText('20');
-        bbtbPage.clickBbtbBrownRiceRadioButton();
-        bbtbPage.typeBbtbSteakQtyText('10');
-        bbtbPage.typeBbtbChickenQtyText('10');
+        bbtbPage.typeBbtbQtyText("20");
+        bbtbPage.clickBbtbAssortmentButton();
         browser.waitForAngular().then(function() {
             expect(bbtbPage.getBbtbAssortmentTotalText()).toBe('20');
         });
 
-        veggiePage.clickVeggieButton();
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        //  We have to do this ugly hack until I figure out how to get page objects working with
-        //  multiple items to order
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        element.all(by.repeater('orderItem in order.OrderItems')).last().then(function(row) {
-            var lastQtyElement = row.element(by.name("OrderItemQty"));
-            lastQtyElement.sendKeys('25');
-        });
-
-        chipsPage.clickChipsBiggerButton();
-        chipsPage.typeChipsBiggerQtyText('1');
-
         orderSummaryPage.clickSubmitOrderButton();
+
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // AngularJS wait for Order Manager page to return so we can interact with the page some more
+        // Wait for Order Manager page to return
         ///////////////////////////////////////////////////////////////////////////////////////////
         browser.driver.wait(function() {
             return browser.driver.getCurrentUrl().then(function(url) {
                 return /number/.test(url);
             })
         });
+
         ///////////////////////////////////////////////////////////////////////////////////////////
-        // Wait for Notification Notice to go away because we can't interact with the page until
-        // this is gone
+        // Wait for Notification Notice to go away
         ///////////////////////////////////////////////////////////////////////////////////////////
         browser.getCurrentUrl().then(function(url) {
             expect(url).toContain("OrderManager?message=saved&number");
@@ -124,20 +90,20 @@ describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Man
         }, 15000);
     });
 
-    it('View our Veggie, Bigger Chips, and Big Spread order', function() {
+    it('View our 20 BBTB order', function() {
         orderManagerPage.typeSearchByOrderIdText(helper.getOrderNumber());
         browser.driver.actions().sendKeys(protractor.Key.TAB).perform();
         ///////////////////////////////////////////////////////////////////////////////////////////
         // Click the first and only row in the grid table that has our newly created order
         ///////////////////////////////////////////////////////////////////////////////////////////
-        orderManagerPage.getRowsInSearchGridTable().then(function () {
+        orderManagerPage.getRowsInSearchGridTable().then(function() {
             // Click on our search result
             orderManagerPage.clickRowInSearchGridTable();
             // Wait for the View/Edit Order page to appear
             expect(orderDetailsPage.getOrderNumberText()).toBe('ORDER ' + helper.getOrderNumber())
         });
 
-        // Verify our BBTB and Big Spread order displays correctly
+        // Verify our BBTB order displays correctly
         // Verify Pick Up Details information
         //expect(orderDetailsPage.getPickupDateText).toBe(helper.getOrderDate());
         //expect(orderDetailsPage.getPickupTimeText()).toBe(helper.getOrderTime());
@@ -157,47 +123,17 @@ describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Man
         expect(customerDataPage.getCcEventText()).toBe('My Automation Test');
 
         expect(bbtbPage.getBbtbQtyTextAttribute()).toBe('20');
-        expect(bbtbPage.getBbtbSteakQtyTextAttribute()).toBe('10');
-        expect(bbtbPage.getBbtbChickenQtyTextAttribute()).toBe('10');
         expect(bbtbPage.getBbtbAssortmentTotalText()).toBe('20');
-        element.all(by.repeater('orderItem in order.OrderItems')).get(1).then(function (row) {
-            row.element(by.model('orderItem.Quantity')).getAttribute('value').then(function (qty) {
-                expect(qty).toBe('25');
-            });
-        });
-        expect(chipsPage.getChipsBiggerQtyText()).toBe('1');
 
         element.all(by.repeater('summaryItem in order.OrderItems')).get(0).then(function (row) {
             row.element(by.className('summaryOrderName')).getText().then(function (name) {
                 expect(name).toBe('Burritos By The Box');
             });
             row.element(by.className('summaryOrderDes')).getText().then(function (description) {
-                expect(description).toBe('Serving 20   ( Steak 10 , Chicken 10 ) ; Brown');
+                expect(description).toBe('Serving 20   ( Steak 4 , Chicken 9 , Carnitas 2 , Barbacoa 2 , Fajita Veggies 2 , Sofritas 1 ) ; White');
             });
             row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
                 expect(cost).toBe('$175.00');
-            });
-        });
-        element.all(by.repeater('summaryItem in order.OrderItems')).get(1).then(function (row) {
-            row.element(by.className('summaryOrderName')).getText().then(function (name) {
-                expect(name).toBe('Veggie Spread');
-            });
-            row.element(by.className('summaryOrderDes')).getText().then(function (description) {
-                expect(description).toBe('Serving 25');
-            });
-            row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
-                expect(cost).toBe('$300.00');
-            });
-        });
-        element.all(by.repeater('summaryItem in order.OrderItems')).get(2).then(function (row) {
-            row.element(by.className('summaryOrderName')).getText().then(function (name) {
-                expect(name).toBe('Chips & Salsa Spread');
-            });
-            row.element(by.className('summaryOrderDes')).getText().then(function (description) {
-                expect(description).toBe('0 Big; 1 Bigger;');
-            });
-            row.element(by.className('summaryOrderCost')).getText().then(function (cost) {
-                expect(cost).toBe('$55.00');
             });
         });
     });
