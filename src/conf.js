@@ -12,9 +12,9 @@ exports.config = {
     // Which tests should we run?
     suites: {
         //Run all spec files
-        //connection : '../spec/*.js'
+        //connection : '../spec/*/*.js'
         //Run one spec file
-        connection : '../spec/1 - Single Item Orders/CreateOrderBBTB.js'
+        connection : '../spec/3 - Misc/CreateOrderSearchByZipCode.js'
     },
 
     // Setting our window size to max before the test starts

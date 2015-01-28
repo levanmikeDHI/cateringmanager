@@ -22,7 +22,7 @@ var orderManagerPage = new orderManagerPageObj();
 // customer contact info, items we ordered, and the order summary info comes back to us correctly.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 describe('Create New Order with Big Spread from Catering Manager', function() {
-    it('Create 30 Big Spread with Chicken, Steak, and Carnitas order', function() {
+    it('Create Big Spread with Chicken, Steak, and Carnitas order', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         topNavigationPage.clickCreateNewOrder();
 
@@ -82,7 +82,7 @@ describe('Create New Order with Big Spread from Catering Manager', function() {
         }, 15000);
     });
 
-    it('View our 30 Big Spread order', function() {
+    it('View our Big Spread order', function() {
         orderManagerPage.typeSearchByOrderIdText(helper.getOrderNumber());
         browser.driver.actions().sendKeys(protractor.Key.TAB).perform();
         orderManagerPage.getRowsInSearchGridTable().then(function() {

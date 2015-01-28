@@ -1,6 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Including js code of the Page Objects we will need for this Spec
-///////////////////////////////////////////////////////////////////////////////////////////////////
 var helper = require('../../src/Helper.js');
 var topNavigationPageObj = require('../../src/TopNavigationPageObjects.js');
 var restaurantSearchPageObj = require('../../src/RestaurantSearchPageObjects.js');
@@ -11,9 +8,6 @@ var chipsPageObj = require('../../src/ChipsPageObjects.js');
 var orderSummaryPageObj = require('../../src/OrderSummaryPageObjects.js');
 var orderManagerPageObj = require('../../src/OrderManagerPageObjects.js');
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Declaring those Page Objects so we can use them later
-///////////////////////////////////////////////////////////////////////////////////////////////////
 var topNavigationPage = new topNavigationPageObj();
 var restaurantSearchPage = new restaurantSearchPageObj();
 var orderDetailsPage = new orderDetailsPageObj();
@@ -30,12 +24,10 @@ var orderManagerPage = new orderManagerPageObj();
 // info, items we ordered, and the order summary info comes back to us correctly.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 describe('Create New Order with 2 Meat and Big Chips from Catering Manager', function() {
-    it('2 Meat Spread with Chicken and Carnitas and Big Chips', function() {
+    it('Create 2 Meat Spread with Chicken and Carnitas and Big Chips order', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         topNavigationPage.clickCreateNewOrder();
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Select store #74 because this is our automation testing store
-        ///////////////////////////////////////////////////////////////////////////////////////////
+
         restaurantSearchPage.clickChangeRestaurantButton();
         restaurantSearchPage.typeRestaurantNumberText("74");
         restaurantSearchPage.clickChangeRestaurantSearchButton();
@@ -43,9 +35,6 @@ describe('Create New Order with 2 Meat and Big Chips from Catering Manager', fun
         restaurantSearchPage.clickRestaurantSearchStoreNameText();
         expect(orderDetailsPage.restaurantNameText.getText()).toBe('88th & Wadsworth');
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Find out what tomorrow's date is and store off the numerical day to use later
-        ///////////////////////////////////////////////////////////////////////////////////////////
         var tomorrowsDate = (new Date());
         tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
         var day = tomorrowsDate.getDate();
@@ -55,9 +44,6 @@ describe('Create New Order with 2 Meat and Big Chips from Catering Manager', fun
         var tomorrowsDateStr = (('0' + (tomorrowsDate.getMonth()+1)).slice(-2) + '/' + ('0' + tomorrowsDate.getDate()).slice(-2) + '/' + tomorrowsDate.getFullYear());
         helper.setOrderDate(tomorrowsDateStr.toString());
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click the calendar control and select tomorrow's day
-        ///////////////////////////////////////////////////////////////////////////////////////////
         orderDetailsPage.typePickupDateText('');
         browser.driver.findElement(by.linkText(day.toString())).click();
         ///////////////////////////////////////////////////////////////////////////////////////////

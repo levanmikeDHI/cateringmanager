@@ -1,6 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Including js code of the Page Objects we will need for this Spec
-///////////////////////////////////////////////////////////////////////////////////////////////////
 var helper = require('../../src/Helper.js');
 var topNavigationPageObj = require('../../src/TopNavigationPageObjects.js');
 var restaurantSearchPageObj = require('../../src/RestaurantSearchPageObjects.js');
@@ -11,9 +8,6 @@ var bigSpreadPageObj = require('../../src/BigSpreadPageObjects.js');
 var orderSummaryPageObj = require('../../src/OrderSummaryPageObjects.js');
 var orderManagerPageObj = require('../../src/OrderManagerPageObjects.js');
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Declaring those Page Objects so we can use them later
-///////////////////////////////////////////////////////////////////////////////////////////////////
 var topNavigationPage = new topNavigationPageObj();
 var restaurantSearchPage = new restaurantSearchPageObj();
 var orderDetailsPage = new orderDetailsPageObj();
@@ -31,7 +25,7 @@ var orderManagerPage = new orderManagerPageObj();
 // comes back to us correctly.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 describe('Create New Order with 2 Meat and Big Spread from Catering Manager', function() {
-    it('2 Meat Spread with Barbacoa and Carnitas and Big Spread with Chicken, Steak, and Fajita Veggies', function() {
+    it('Create 2 Meat Spread with Barbacoa and Carnitas and Big Spread with Chicken, Steak, and Fajita Veggies order', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         topNavigationPage.clickCreateNewOrder();
         ///////////////////////////////////////////////////////////////////////////////////////////

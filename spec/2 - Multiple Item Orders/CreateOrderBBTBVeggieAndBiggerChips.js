@@ -1,6 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Including js code of the Page Objects we will need for this Spec
-///////////////////////////////////////////////////////////////////////////////////////////////////
 var helper = require('../../src/Helper.js');
 var topNavigationPageObj = require('../../src/TopNavigationPageObjects.js');
 var restaurantSearchPageObj = require('../../src/RestaurantSearchPageObjects.js');
@@ -9,13 +6,9 @@ var customerDataPageObj = require('../../src/CustomerDataPageObjects.js');
 var bbtbPageObj = require('../../src/BbtbPageObjects.js');
 var veggiePageObj = require('../../src/VeggiePageObjects.js');
 var chipsPageObj = require('../../src/ChipsPageObjects.js');
-var bigSpreadPageObj = require('../../src/BigSpreadPageObjects.js');
 var orderSummaryPageObj = require('../../src/OrderSummaryPageObjects.js');
 var orderManagerPageObj = require('../../src/OrderManagerPageObjects.js');
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Declaring those Page Objects so we can use them later
-///////////////////////////////////////////////////////////////////////////////////////////////////
 var topNavigationPage = new topNavigationPageObj();
 var restaurantSearchPage = new restaurantSearchPageObj();
 var orderDetailsPage = new orderDetailsPageObj();
@@ -23,7 +16,6 @@ var customerDataPage = new customerDataPageObj();
 var bbtbPage = new bbtbPageObj();
 var veggiePage = new veggiePageObj();
 var chipsPage = new chipsPageObj();
-var bigSpreadPage = new bigSpreadPageObj();
 var orderSummaryPage = new orderSummaryPageObj();
 var orderManagerPage = new orderManagerPageObj();
 
@@ -34,12 +26,10 @@ var orderManagerPage = new orderManagerPageObj();
 // customer contact info, items we ordered, and the order summary info comes back to us correctly.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Manager', function() {
-    it('BBTB, Veggie Spread, and Bigger Chips', function() {
+    it('Create a BBTB, Veggie Spread, and Bigger Chips order', function() {
         browser.get("http://CateringAutomation:rGh37kKoQsP!@cateringmanagerqa.chipotle.esc");
         topNavigationPage.clickCreateNewOrder();
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Select store #74 because this is our automation testing store
-        ///////////////////////////////////////////////////////////////////////////////////////////
+
         restaurantSearchPage.clickChangeRestaurantButton();
         restaurantSearchPage.typeRestaurantNumberText("74");
         restaurantSearchPage.clickChangeRestaurantSearchButton();
@@ -47,9 +37,6 @@ describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Man
         restaurantSearchPage.clickRestaurantSearchStoreNameText();
         expect(orderDetailsPage.restaurantNameText.getText()).toBe('88th & Wadsworth');
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Find out what tomorrow's date is and store off the numerical day to use later
-        ///////////////////////////////////////////////////////////////////////////////////////////
         var tomorrowsDate = (new Date());
         tomorrowsDate.setDate(tomorrowsDate.getDate() + 1);
         var day = tomorrowsDate.getDate();
@@ -59,9 +46,6 @@ describe('Create New Order with BBTB, Veggie, and Bigger Chips from Catering Man
         var tomorrowsDateStr = (('0' + (tomorrowsDate.getMonth()+1)).slice(-2) + '/' + ('0' + tomorrowsDate.getDate()).slice(-2) + '/' + tomorrowsDate.getFullYear());
         helper.setOrderDate(tomorrowsDateStr.toString());
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // Click the calendar control and select tomorrow's day
-        ///////////////////////////////////////////////////////////////////////////////////////////
         orderDetailsPage.typePickupDateText('');
         browser.driver.findElement(by.linkText(day.toString())).click();
         ///////////////////////////////////////////////////////////////////////////////////////////
